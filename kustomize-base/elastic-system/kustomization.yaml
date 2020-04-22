@@ -1,0 +1,4 @@
+bases:
+  - elastic-operator 
+  - elasticsearch-cluster
+

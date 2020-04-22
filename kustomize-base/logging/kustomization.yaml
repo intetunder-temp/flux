@@ -1,0 +1,4 @@
+bases:
+  - shared
+  - filebeat7 
+  - logstash7

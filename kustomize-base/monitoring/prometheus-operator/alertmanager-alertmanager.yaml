@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: main
+  namespace: monitoring
+spec:
+  podMetadata:
+    labels:
+      team: devops
+  replicas: 1
+  nodeSelector:
+    kubernetes.io/os:
+    workload: default
+  tolerations:
+    - key: workload
+      operator: Equal
+      value: default 
+      effect: NoSchedule

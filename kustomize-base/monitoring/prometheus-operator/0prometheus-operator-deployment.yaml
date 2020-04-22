@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-operator
+  namespace: monitoring
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: prometheus-operator 
+          resources:
+            requests:
+              memory: 5Mi
+            limits:
+              memory: 100Mi
+
+      nodeSelector:
+        beta.kubernetes.io/os:
+        workload: default 
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: default 
+          effect: NoSchedule
+

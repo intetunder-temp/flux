@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-cluster-pipeline
+  namespace: logging
+data:
+  input_main: |-
+    input {
+      beats {
+        port => 5044
+        client_inactivity_timeout => 300
+        include_codec_tag => false
+      }
+    }
+  output_main: |-
+    output {
+      elasticsearch {
+        hosts => ["${ELASTICSEARCH_HOST}"]
+        manage_template => false
+        index => "%{[index]}"
+        user => "filebeat"
+        password => "${FILEBEAT_PASS}"
+        ilm_enabled => false
+        cacert => "/usr/share/logstash/config/ssl/ca.crt"
+      }
+    }

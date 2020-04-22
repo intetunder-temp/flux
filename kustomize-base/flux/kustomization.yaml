@@ -1,0 +1,8 @@
+resources:
+  - flux-account.yaml
+  - flux-deployment.yaml
+  - memcached-account.yaml
+  - memcached-deployment.yaml
+  - memcached-service.yaml
+  - namespace.yaml
+  - secret.yaml

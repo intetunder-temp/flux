@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: grafana
+  name: grafana
+  namespace: monitoring
+spec:
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      hostname: grafana
+      nodeSelector:
+        kubernetes.io/os:
+        beta.kubernetes.io/os:
+        workload: default 
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: default 
+          effect: NoSchedule
+
+      securityContext:
+        runAsUser: 472
+        fsGroup: 472
+
+      containers:
+        - name: grafana
+
+          volumeMounts:
+            - name: resource-lifecycle-cluster
+              mountPath: /grafana-dashboard-definitions/0/resource-lifecycle-cluster
+              readOnly: false
+            - name: resource-lifecycle-deployments
+              mountPath: /grafana-dashboard-definitions/0/resource-lifecycle-deployments
+              readOnly: false
+            - name: thanos-compactor
+              mountPath: /grafana-dashboard-definitions/0/thanos-compactor
+              readOnly: false
+            - name: thanos-sidecar
+              mountPath: /grafana-dashboard-definitions/0/thanos-sidecar
+              readOnly: false
+            - name: thanos-store
+              mountPath: /grafana-dashboard-definitions/0/thanos-store
+              readOnly: false
+            - name: thanos-query
+              mountPath: /grafana-dashboard-definitions/0/thanos-query
+              readOnly: false
+      volumes:
+        - name: resource-lifecycle-cluster
+          configMap:
+            name: resource-lifecycle-cluster
+        - name: resource-lifecycle-deployments
+          configMap:
+            name: resource-lifecycle-deployments
+        - name: thanos-query
+          configMap:
+            name: thanos-query 
+        - name: thanos-sidecar
+          configMap:
+            name: thanos-sidecar 
+        - name: thanos-compactor
+          configMap:
+            name: thanos-compactor
+        - name: thanos-store
+          configMap:
+            name: thanos-store 
+        - name: thanos-sidecar
+          configMap:
+            name: thanos-sidecar 

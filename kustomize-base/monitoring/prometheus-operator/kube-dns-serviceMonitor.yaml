@@ -1,0 +1,37 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kube-dns
+  labels:
+    team: devops
+  namespace: monitoring
+spec:
+  endpoints:
+  - port: metrics
+    interval: 30s
+    scheme: http
+    path: /metrics
+  selector:
+    matchLabels:
+      k8s-app: kube-dns-metrics
+  namespaceSelector:
+    matchNames:
+    - kube-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: kube-dns-metrics
+  name: kube-dns-metrics
+  namespace: kube-system
+spec:
+  clusterIP: None
+  ports:
+  - name: metrics
+    protocol: TCP
+    port: 10055
+  selector:
+    k8s-app: kube-dns
+  type: ClusterIP

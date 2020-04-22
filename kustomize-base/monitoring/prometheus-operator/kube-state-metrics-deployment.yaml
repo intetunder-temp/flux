@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-state-metrics
+  namespace: monitoring
+spec:
+  template:
+    spec:
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: default
+          effect: NoSchedule
+      nodeSelector:
+        kubernetes.io/os:
+        workload: default 
+      containers:
+      - name: kube-state-metrics
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi

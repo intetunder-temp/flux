@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+#  To avoid: "Error performing git fetch: Initialized empty Git repository, Server does not allow request for unadvertised object [commit hash]: exit status 128" USE release versions which do not become submodules
+  - github.com/coreos/kube-prometheus?ref=v0.5.0
+  - alertmanager-backend-config.yaml
+  - grafana-backend-config.yaml
+  - grafana-config-map.yaml
+  - grafana-persistent-storage-pvc.yaml
+  - prometheus-k8s-backendconfig.yaml
+  - prometheus-sidecar-service.yaml
+  - prometheus-storage-class.yaml
+  - prometheus-k8s-rules-additions.yaml
+  - kube-dns-serviceMonitor.yaml
+  - thanos-sidecar-service-monitor.yaml
+  - grafana-dashboard-definitions2.yaml
+
+### Rbac rules for services monitoring ###
+  - RbacNs/thanos-servicemonitor-rbac.yaml
+
+
+patchesStrategicMerge:
+  - 0prometheus-operator-deployment.yaml
+  - alertmanager-alertmanager.yaml
+  - alertmanager-service.yaml
+  - grafana-deployment.yaml
+  - grafana-service.yaml
+  - kube-state-metrics-deployment.yaml
+  - node-exporter-daemonset.yaml
+  - prometheus-adaptor.yaml
+  - prometheus-prometheus.yaml
+  - prometheus-service.yaml
+  - prometheus-rules.yaml
+  - grafana-dashboardDatasources.yaml

@@ -1,0 +1,36 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: k8s
+  namespace: monitoring
+spec:
+  podMetadata:
+    labels:
+      team: devops
+  nodeSelector:
+    kubernetes.io/os:
+    workload: default 
+  tolerations:
+    - key: workload
+      operator: Equal
+      value: default
+      effect: NoSchedule
+  replicas: 2
+  retention: 1w
+  #we need to turn on admin API, to be able to test deleting series. This is just a test before we do the same in production, about to run out of space there
+  enableAdminAPI: true
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: prometheus-ssd
+        resources:
+          requests:
+            storage: 10Gi
+  baseImage: eu.gcr.io/loveholidays-ci-cd/prometheus
+  version: v2.15.2
+  thanos:
+    # check the operator that does not add  --cluster pears that gets in conflict with thanos
+    version: v0.10.1
+    objectStorageConfig:
+      key: thanos.yaml
+      name: thanos-objstore-config

@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-config
+  namespace: logging
+  labels:
+    k8s-app: filebeat
+data:
+  filebeat.yml: |-
+    filebeat.inputs:
+    - type: container
+      paths:
+        - /var/log/containers/*.log
+      fields_under_root: true
+      processors:
+        - decode_json_fields:
+            fields: ["message"]
+            target: ""
+            overwrite_keys: true
+        - add_kubernetes_metadata:
+            host: ${NODE_NAME}
+            matchers:
+            - logs_path:
+                logs_path: "/var/log/containers/"
+
+        ### Vault Filtering ###
+        ### App Logs  ###
+        - add_fields:
+            when:
+              or:
+                - contains:
+                    kubernetes.labels.app_kubernetes_io/name: "vault-secrets-operator"
+            target: ''
+            fields:
+              type: "vault"
+              index: "devops-app-logs"
+        ### Flux Filtering ###
+        ### App Logs  ###
+        - add_fields:
+            when:
+              or:
+                - contains:
+                    kubernetes.labels.app: "flux"
+                - contains:
+                    kubernetes.labels.name: "flux"
+            target: ''
+            fields:
+              type: "flux"
+              index: "devops-app-logs"
+        ### Linkerd Filtering ###
+        ### App Logs  ###
+        - add_fields:
+            when:
+              or:
+                - contains:
+                    kubernetes.container.name: "linkerd-proxy"
+                - contains:
+                    kubernetes.namespace: "linkerd"
+            target: ''
+            fields:
+              type: "linkerd"
+              index: "linkerd-logs"
+
+
+
+    logging.level: warning 
+    processors:
+      - add_cloud_metadata: ~ 
+        #- add_host_metadata: ~
+              
+    monitoring:
+      enabled: true
+      #      cluster_uuid: "k-zikbijT--7u1o_UQixMg"
+      elasticsearch:
+        hosts: ["${ELASTICSEARCH_HOST}"]
+        username: filebeat
+        password: "${FILEBEAT_PASS}" 
+    output.logstash:
+      enabled: true
+      index: logstash 
+      hosts:
+        - "logstash-cluster.logging.svc:5044"  
+      loadbalance: true
+      worker: 3 
+      compression_level: 9 
+      pipelining: 0
+

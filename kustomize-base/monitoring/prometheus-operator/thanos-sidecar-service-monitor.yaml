@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    team: devops
+    app: thanos-sidecar
+  name: thanos-sidecar
+  namespace: monitoring
+spec:
+  endpoints:
+    - interval: 30s
+      scheme: http
+      targetPort: 10902
+      path: /metrics
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      thanos: sidecar

@@ -1,0 +1,81 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: prometheus-k8s-rules-additions
+  namespace: monitoring
+spec:
+  groups:
+    - name: kubernetes-apps-alerts
+      rules:
+        - alert: KubeDeploymentReplicasMismatch
+          annotations:
+            message: Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not
+              matched the expected number of replicas for longer than 2 hours.
+            runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubedeploymentreplicasmismatch
+          expr: |
+            kube_deployment_spec_replicas{job="kube-state-metrics"}
+              !=
+            kube_deployment_status_replicas_available{job="kube-state-metrics"}
+          for: 2h
+          labels:
+            severity: critical
+
+        - alert: KubeStatefulSetReplicasMismatch
+          annotations:
+            message: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} has
+              not matched the expected number of replicas for longer than 30 minutes.
+            runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubestatefulsetreplicasmismatch
+          expr: |
+            kube_statefulset_status_replicas_ready{job="kube-state-metrics"}
+              !=
+            kube_statefulset_status_replicas{job="kube-state-metrics"}
+          for: 30m
+          labels:
+            severity: critical
+
+        - alert: KubeCronJobRunning
+          annotations:
+            message: CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} is taking more
+              than 2h to complete.
+            runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubecronjobrunning
+          expr: |
+            time() - kube_cronjob_next_schedule_time{job="kube-state-metrics"} > 3600
+          for: 2h
+          labels:
+            severity: warning
+
+        - alert: KubeJobCompletion
+          annotations:
+            message: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more
+              than 2 hours to complete.
+            runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubejobcompletion
+          expr: |
+            kube_job_spec_completions{job="kube-state-metrics"} - kube_job_status_succeeded{job="kube-state-metrics"}  > 0
+          for: 2h
+          labels:
+            severity: warning
+
+            #- name: kubernetes-resources-alerts
+            #  rules:
+              #- alert: CPUThrottlingHigh
+              #  annotations:
+              #    message: '{{ printf "%0.0f" $value }}% throttling of CPU in namespace {{ $labels.namespace
+              #      }} for container {{ $labels.container_name }} in pod {{ $labels.pod_name
+              #      }}.'
+              #    runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-cputhrottlinghigh
+              #  expr: "100 * sum(increase(container_cpu_cfs_throttled_periods_total{}[5m]))
+              #    by (container_name, pod_name, namespace) \n  / \nsum(increase(container_cpu_cfs_periods_total{}[5m]))
+              #    by (container_name, pod_name, namespace)\n  > 60 \n"
+              #  for: 60m
+              #  labels:
+              #    severity: warning
+
+    - name: general.rules-alerts
+      rules:
+        - alert: TargetDown
+          annotations:
+            message: '{{ $value }}% of the {{ $labels.job }} targets are down.'
+          expr: 100 * (count(up == 0) BY (job) / count(up) BY (job)) > 20
+          for: 20m
+          labels:
+            severity: warning

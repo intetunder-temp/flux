@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-adapter
+  namespace: monitoring
+spec:
+  template:
+    spec:
+      nodeSelector:
+        kubernetes.io/os:
+        workload: default
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: default 
+          effect: NoSchedule
