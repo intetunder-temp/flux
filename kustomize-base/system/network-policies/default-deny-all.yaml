@@ -1,0 +1,28 @@
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: default-deny-all
+  namespace: flux
+spec:
+  podSelector: {}
+  ingress: []
+---
+#kind: NetworkPolicy
+#apiVersion: networking.k8s.io/v1
+#metadata:
+#  name: default-deny-all
+#  namespace: credit-card-gateway
+#spec:
+#  podSelector: {}
+#  ingress:
+#  - from: []
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: default-deny-all
+  namespace: credit-card-vault
+spec:
+  podSelector: {}
+  ingress: []

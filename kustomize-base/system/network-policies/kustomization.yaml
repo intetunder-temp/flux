@@ -1,0 +1,3 @@
+resources:
+  - flux-network-policies.yaml
+  #  - default-deny-all.yaml
