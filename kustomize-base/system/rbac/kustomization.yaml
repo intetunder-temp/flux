@@ -1,0 +1,22 @@
+resources:
+  # Devops RBAC
+  - devops/default-admin-binding.yaml
+  - devops/default-admin-role.yaml
+  - devops/devops-admin-binding.yaml
+  - devops/devops-admin-role.yaml
+  - devops/logging-admin-binding.yaml
+  - devops/logging-admin-role.yaml
+  - devops/logstash7-admin-binding.yaml
+  - devops/logstash7-admin-role.yaml
+  - devops/monitoring-admin-binding.yaml
+  - devops/monitoring-admin-role.yaml
+  - devops/web-admin-binding.yaml
+  - devops/web-admin-role.yaml
+  # Web Dev's RBAC
+  - web/web-port-forward-binding.yaml
+  - web/web-port-forward-role.yaml
+  - web/web-privileged-binding.yaml
+  - web/web-privileged-role.yaml
+  - web/web-reader-binding.yaml
+  - web/web-reader-role.yaml
+

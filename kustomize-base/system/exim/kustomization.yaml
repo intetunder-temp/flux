@@ -1,0 +1,9 @@
+resources:
+  - exim-external-deployment.yaml
+  - exim-external-pdb.yaml
+  - exim-external-service.yaml
+  - exim-internal-deployment.yaml
+  - exim-internal-loadbalancer.yaml
+  - exim-internal-pdb.yaml
+  - exim-internal-service.yaml
+
