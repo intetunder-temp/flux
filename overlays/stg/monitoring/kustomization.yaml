@@ -3,3 +3,5 @@ kind: Kustomization
 bases:
   - ../../../kustomize-base/monitoring
 
+patchesStrategicMerge:
+  - alertmanager-alertmanager.yaml 
