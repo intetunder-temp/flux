@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exim-internal
+  namespace: web
+spec:
+  revisionHistoryLimit: 0
+  replicas: 3
+  selector:
+    matchLabels:
+      app: exim-internal
+  template:
+    metadata:
+      labels:
+        app: exim-internal
+    spec:
+      nodeSelector:
+        workload: web
+        suffix: "05"
+      tolerations:
+      - key: workload
+        operator: Equal
+        value: web
+        effect: NoSchedule
+      terminationGracePeriodSeconds: 300
+      hostname: exim
+      containers:
+      - name: exim
+        image: docker.io/imixs/exim4:latest 
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 96Mi
+        env:
+        - name: RELAY_DOMAINS
+          value: darknet.fyi
+        ports:
+        - name: smtp
+          containerPort: 25
+        volumeMounts:
+        - name: exim-internal-secret
+          mountPath: /etc/exim4/passwd.client
+          subPath: passwd.client
+      volumes:
+      - name: exim-internal-secret
+        secret:
+          secretName: exim-internal

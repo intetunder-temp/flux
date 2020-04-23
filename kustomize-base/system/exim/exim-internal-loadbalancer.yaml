@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: exim-internal-lb
+  namespace: web
+  annotations:
+    cloud.google.com/load-balancer-type: Internal
+spec:
+  selector:
+    app: exim-internal
+  type: LoadBalancer
+  ports:
+  - name: smtp
+    port: 25
+  - name: smtp-2
+    port: 2525
+    targetPort: 25
+  loadBalancerIP: 10.132.64.56
+  loadBalancerSourceRanges:
+  # Add source ranges as a list under here
+  # - 10.1.1.0/24 
