@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: gke-preemptible-killer
+  labels:
+    app: gke-preemptible-killer
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - delete
+- apiGroups: [""] # "" indicates the core API group
+  resources:
+  - pods
+  verbs:
+  - delete
+  - get
+  - list

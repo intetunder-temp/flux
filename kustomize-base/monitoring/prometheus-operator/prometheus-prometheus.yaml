@@ -26,7 +26,6 @@ spec:
         resources:
           requests:
             storage: 10Gi
-  baseImage: eu.gcr.io/loveholidays-ci-cd/prometheus
   version: v2.15.2
   thanos:
     # check the operator that does not add  --cluster pears that gets in conflict with thanos

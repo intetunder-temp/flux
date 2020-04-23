@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: gke-preemptible-killer
+  namespace: devops
+  labels:
+    app: gke-preemptible-killer
+spec:
+  selector:
+    app: gke-preemptible-killer
+  type: NodePort
+  ports:
+  - name: metrics
+    protocol: TCP
+    port: 9001

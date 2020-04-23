@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: gke-preemptible-killer
+    team: devops
+  name: gke-preemptible-killer
+  namespace: devops
+spec:
+  endpoints:
+    - interval: 30s
+      scheme: http
+      targetPort: 9001
+      path: /metrics
+  namespaceSelector:
+    matchNames:
+      - devops
+  selector:
+    matchLabels:
+      app: gke-preemptible-killer

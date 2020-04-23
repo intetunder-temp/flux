@@ -1,0 +1,25 @@
+---
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: web
+spec:
+  chart:
+    repository: https://charts.jetstack.io
+    name: cert-manager
+    version: v0.9.1
+  values:
+    webhook:
+      enabled: false
+    cainjector:
+      enabled: false
+    podAnnotations:
+      cluster-autoscaler.kubernetes.io/safe-to-evict: 'true'
+    nodeSelector:
+      workload: default 
+    tolerations:
+      - key: workload
+        operator: Equal
+        value: default
+        effect: NoSchedule

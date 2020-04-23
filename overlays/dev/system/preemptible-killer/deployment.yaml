@@ -1,0 +1,11 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gke-preemptible-killer
+  namespace: devops
+spec:
+  template:
+    spec:
+      nodeSelector:
+      tolerations:
+

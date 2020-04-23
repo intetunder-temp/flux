@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flux
+  namespace: flux
+spec:
+  template:
+    spec:
+      containers:
+      - name: flux
+        args:
+        - --memcached-service=
+        - --ssh-keygen-dir=/var/fluxd/keygen
+        - --git-url=git@github.com:intetunder-temp/flux
+        - --git-branch=master
+        - --git-poll-interval=1m
+        - --git-timeout=60s
+        - --sync-interval=1m
+        - --registry-rps=5
+        - --registry-burst=5
+        - --registry-exclude-image=*
+        - --git-label=flux-sync
+        - --git-user=Flux automation
+        - --git-email=flux@example.com
+        - --listen-metrics=:9031
+        - --manifest-generation=true
+        - --git-path=overlays/dev
+

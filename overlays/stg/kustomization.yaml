@@ -1,5 +1,10 @@
 bases:
-  - flux
+  - system/flux
+  - system/preemptible-killer  
+    # TODO not ready yet
+    #- system/cert-manager  
+    #- system/cert-manager-certificates  
+    #- system/vault-secrets-operator
   - monitoring
   - elastic-system
   - logging 

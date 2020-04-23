@@ -1,0 +1,70 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gke-preemptible-killer
+  namespace: devops
+  annotations:
+    downscaler/exclude: "true"
+  labels:
+    app: gke-preemptible-killer
+    team: devops
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: gke-preemptible-killer
+  template:
+    metadata:
+      labels:
+        app: gke-preemptible-killer
+        team: devops
+        version: 1.0.35
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9001"
+    spec:
+      nodeSelector:
+        workload: default 
+      tolerations:
+      - key: workload
+        operator: Equal
+        value: default
+        effect: NoSchedule
+      serviceAccount: gke-preemptible-killer
+      terminationGracePeriodSeconds: 300
+      containers:
+      - name: gke-preemptible-killer
+        image: estafette/estafette-gke-preemptible-killer:1.1.21 
+        ports:
+        - name: prom-metrics
+          containerPort: 9001
+        env:
+        - name: DRAIN_TIMEOUT
+          value: "600"
+        - name: INTERVAL
+          value: "1800"
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/app-secrets/google-service-account.json
+        resources:
+          requests:
+            cpu: 1m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 128Mi
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: prom-metrics
+          initialDelaySeconds: 30
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: app-secrets
+          mountPath: /etc/app-secrets
+      volumes:
+      - name: app-secrets
+        secret:
+          secretName: gke-preemptible-killer-secrets
