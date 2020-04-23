@@ -60,10 +60,6 @@ spec:
       node.master: false
       node.data: true
       node.ingest: false
-      xpack.security.authc.realms:
-        native:
-          native1: 
-            order: 1
       node.attr.zone: europe-west4-a
       cluster.routing.allocation.awareness.attributes: zone
     podTemplate:

@@ -3,3 +3,6 @@ kind: Kustomization
 namespace: flux
 resources:
   - ../../../kustomize-base/flux
+
+patchesStrategicMerge:
+- patch.yaml 

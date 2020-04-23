@@ -25,5 +25,5 @@ spec:
         - --git-email=flux@example.com
         - --listen-metrics=:9031
         - --manifest-generation=true
-        - --git-path=overlays/dev
+        - --git-path=overlays/stg
 
