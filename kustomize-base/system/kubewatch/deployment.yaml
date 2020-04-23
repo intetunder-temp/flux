@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubewatch
+  namespace: kubewatch
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: kubewatch
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: 'true'
+      labels:
+        app: kubewatch
+    spec:
+      serviceAccountName: kubewatch
+      containers:
+        - name: kubewatch
+          image: quay.io/bitnami/kubewatch:latest 
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 50m
+              memory: 768Mi
+            limits:
+              memory: 768Mi
+          env:
+            - name: SLACK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kubewatch
+                  key: slack-token
